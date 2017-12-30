@@ -1,5 +1,6 @@
 package com.github.moko256.usbdebugswitch;
 
+import android.app.KeyguardManager;
 import android.graphics.drawable.Icon;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
@@ -18,22 +19,23 @@ public class UsbDebugToggle extends TileService {
 
         Tile tile = getQsTile();
 
-        try {
-            int flag = Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED);
+        if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()){
+            locked(tile);
+        } else {
+            try {
+                int flag = Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED);
 
-            if (flag == 0) {
-                Settings.Global.putInt(getContentResolver(), Settings.Global.ADB_ENABLED, 1);
-                tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_on_black_24dp));
-                tile.setState(Tile.STATE_ACTIVE);
-
-            } else {
-                Settings.Global.putInt(getContentResolver(), Settings.Global.ADB_ENABLED, 0);
-                tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_off_black_24dp));
-                tile.setState(Tile.STATE_INACTIVE);
+                if (flag == 0) {
+                    Settings.Global.putInt(getContentResolver(), Settings.Global.ADB_ENABLED, 1);
+                    on(tile);
+                } else {
+                    Settings.Global.putInt(getContentResolver(), Settings.Global.ADB_ENABLED, 0);
+                    off(tile);
+                }
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                unavailable(tile);
             }
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-            tile.setIcon(Icon.createWithResource(this, R.drawable.ic_usb_black_24dp));
         }
 
         tile.updateTile();
@@ -49,18 +51,42 @@ public class UsbDebugToggle extends TileService {
             int flag = Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED);
 
             if (flag != 0) {
-                tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_on_black_24dp));
-                tile.setState(Tile.STATE_ACTIVE);
+                on(tile);
             } else {
-                tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_off_black_24dp));
-                tile.setState(Tile.STATE_INACTIVE);
+                off(tile);
+            }
+            if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()){
+                locked(tile);
             }
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
-            tile.setIcon(Icon.createWithResource(this, R.drawable.ic_usb_black_24dp));
+            unavailable(tile);
         }
 
         tile.updateTile();
+    }
+
+    private void on(Tile tile){
+        tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_on_black_24dp));
+        tile.setState(Tile.STATE_ACTIVE);
+        tile.setLabel("Enable");
+    }
+
+    private void off(Tile tile){
+        tile.setIcon(Icon.createWithResource(this, R.drawable.ic_flash_off_black_24dp));
+        tile.setState(Tile.STATE_INACTIVE);
+        tile.setLabel("Disable");
+    }
+
+    private void locked(Tile tile){
+        tile.setState(Tile.STATE_UNAVAILABLE);
+        tile.setLabel("Unavailable in lock screen");
+    }
+
+    private void unavailable(Tile tile){
+        tile.setIcon(Icon.createWithResource(this, R.drawable.ic_usb_black_24dp));
+        tile.setState(Tile.STATE_UNAVAILABLE);
+        tile.setLabel("Unavailable");
     }
 
 }
