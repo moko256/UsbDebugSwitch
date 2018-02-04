@@ -5,6 +5,7 @@ import android.graphics.drawable.Icon;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.widget.Toast;
 
 /**
  * Created by moko256 on 2017/12/08.
@@ -20,7 +21,7 @@ public class UsbDebugToggle extends TileService {
         Tile tile = getQsTile();
 
         if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()){
-            locked(tile);
+            locked();
         } else {
             try {
                 int flag = Settings.Global.getInt(getContentResolver(), Settings.Global.ADB_ENABLED);
@@ -55,9 +56,6 @@ public class UsbDebugToggle extends TileService {
             } else {
                 off(tile);
             }
-            if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()){
-                locked(tile);
-            }
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
             unavailable(tile);
@@ -78,9 +76,8 @@ public class UsbDebugToggle extends TileService {
         tile.setLabel("Disable");
     }
 
-    private void locked(Tile tile){
-        tile.setState(Tile.STATE_UNAVAILABLE);
-        tile.setLabel("Unavailable in lock screen");
+    private void locked(){
+        Toast.makeText(this, "Unavailable in lock screen", Toast.LENGTH_SHORT).show();
     }
 
     private void unavailable(Tile tile){
