@@ -34,7 +34,7 @@ public class UsbDebugToggle extends TileService {
 
         Tile tile = getQsTile();
 
-        if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()) {
+        if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).isKeyguardLocked()) {
             locked();
         } else {
             try {
@@ -48,7 +48,7 @@ public class UsbDebugToggle extends TileService {
                     Settings.Global.putInt(contentResolver, Settings.Global.ADB_ENABLED, 0);
                     off(tile);
                 }
-            } catch (Settings.SettingNotFoundException e) {
+            } catch (Settings.SettingNotFoundException | SecurityException e) {
                 e.printStackTrace();
                 unavailable(tile);
             }
