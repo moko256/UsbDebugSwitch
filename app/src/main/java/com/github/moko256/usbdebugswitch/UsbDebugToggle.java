@@ -24,7 +24,7 @@ public class UsbDebugToggle extends TileService {
     public void onCreate() {
         super.onCreate();
         onIcon = Icon.createWithResource(this, R.drawable.margined_on);
-        offIcon = Icon.createWithResource(this, R.drawable.cellphone_link_off);
+        offIcon = Icon.createWithResource(this, R.drawable.margined_off);
         unavailableIcon = Icon.createWithResource(this, R.drawable.ic_usb_black_24dp);
     }
 
@@ -82,13 +82,13 @@ public class UsbDebugToggle extends TileService {
     private void on(Tile tile) {
         tile.setIcon(onIcon);
         tile.setState(Tile.STATE_ACTIVE);
-        tile.setLabel("Enable");
+        tile.setLabel("Debug - ON");
     }
 
     private void off(Tile tile) {
         tile.setIcon(offIcon);
         tile.setState(Tile.STATE_INACTIVE);
-        tile.setLabel("Disable");
+        tile.setLabel("Debug - OFF");
     }
 
     private void locked() {
@@ -98,7 +98,7 @@ public class UsbDebugToggle extends TileService {
     private void unavailable(Tile tile) {
         tile.setIcon(unavailableIcon);
         tile.setState(Tile.STATE_UNAVAILABLE);
-        tile.setLabel("Unavailable");
+        tile.setLabel("USB Debug - Unavailable");
     }
 
 }
