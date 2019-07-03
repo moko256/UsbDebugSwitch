@@ -25,7 +25,7 @@ public class UsbDebugToggle extends TileService {
         super.onCreate();
         onIcon = Icon.createWithResource(this, R.drawable.margined_on);
         offIcon = Icon.createWithResource(this, R.drawable.margined_off);
-        unavailableIcon = Icon.createWithResource(this, R.drawable.ic_usb_black_24dp);
+        unavailableIcon = offIcon;
     }
 
     @Override
